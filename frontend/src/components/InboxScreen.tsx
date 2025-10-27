@@ -11,7 +11,7 @@ export default function InboxScreen({ messages, onMessageSelect }: InboxScreenPr
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
-          <div className="text-slate-300 mb-4">
+          <div className="text-muted-foreground mb-4">
             <svg
               className="w-12 h-12 mx-auto"
               fill="none"
@@ -26,7 +26,7 @@ export default function InboxScreen({ messages, onMessageSelect }: InboxScreenPr
               />
             </svg>
           </div>
-          <p className="text-slate-500 font-light text-sm">Your inbox is empty</p>
+          <p className="text-muted-foreground font-light text-sm">Your inbox is empty</p>
         </div>
       </div>
     );
@@ -34,33 +34,31 @@ export default function InboxScreen({ messages, onMessageSelect }: InboxScreenPr
 
   return (
     <div className="h-full overflow-y-auto">
-      <div className="divide-y divide-slate-50">
+      <div className="divide-y divide-secondary">
         {messages.map((message) => (
           <button
             key={message.id}
             onClick={() => onMessageSelect(message)}
-            className={`w-full text-left px-8 py-5 hover:bg-slate-50/50 transition-all duration-200 ${
-              !message.isRead ? 'bg-slate-50/30' : ''
+            className={`w-full text-left px-8 py-5 hover:bg-secondary transition-all duration-200 ${
+              !message.isRead ? 'bg-secondary' : ''
             }`}
           >
             <div className="flex items-start justify-between gap-6">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2.5 mb-1.5">
-                  <span className={`text-sm ${!message.isRead ? 'font-normal text-black' : 'font-light text-slate-900'}`}>
+                  <span className={`text-sm ${!message.isRead ? 'font-normal text-foreground' : 'font-light text-foreground'}`}>
                     {message.from}
                   </span>
-                  {!message.isRead && (
-                    <span className="w-1.5 h-1.5 bg-black rounded-full"></span>
-                  )}
+                  {!message.isRead && <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>}
                 </div>
-                <div className={`text-sm mb-1.5 ${!message.isRead ? 'font-normal text-black' : 'font-light text-slate-600'}`}>
+                <div className={`text-sm mb-1.5 ${!message.isRead ? 'font-normal text-foreground' : 'font-light text-muted-foreground'}`}>
                   {message.subject}
                 </div>
-                <div className="text-sm text-slate-400 truncate font-light">
+                <div className="text-sm text-muted-foreground truncate font-light">
                   {message.body.substring(0, 100)}...
                 </div>
               </div>
-              <div className="text-xs text-slate-400 whitespace-nowrap font-light">
+              <div className="text-xs text-muted-foreground whitespace-nowrap font-light">
                 {formatDistanceToNow(message.timestamp)}
               </div>
             </div>

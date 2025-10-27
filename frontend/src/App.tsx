@@ -7,6 +7,7 @@ import MessageView from './components/MessageView';
 import ComposeModal from './components/ComposeModal';
 import SettingsScreen from './components/SettingsScreen';
 import { Message, Page, WalletConnection } from './types';
+import { ThemeProvider } from '@/lib/theme';
 
 const MOCK_MESSAGES: Message[] = [
   {
@@ -129,65 +130,71 @@ function App() {
   };
 
   if (!isConnected) {
-    return <ConnectScreen onConnect={handleConnect} />;
+    return (
+      <ThemeProvider>
+        <ConnectScreen onConnect={handleConnect} />
+      </ThemeProvider>
+    );
   }
 
   return (
-    <div className="h-screen flex flex-col bg-slate-50">
-      <TopBar wallet={wallet} />
+    <ThemeProvider>
+      <div className="h-screen flex flex-col bg-background">
+        <TopBar wallet={wallet} />
 
-      <div className="flex-1 flex overflow-hidden">
-        <Sidebar
-          currentPage={currentPage}
-          onPageChange={setCurrentPage}
-          onCompose={handleCompose}
+        <div className="flex-1 flex overflow-hidden">
+          <Sidebar
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+            onCompose={handleCompose}
+          />
+
+          <main className="flex-1 overflow-hidden bg-white">
+            {currentPage === 'inbox' && (
+              <InboxScreen
+                messages={messages}
+                onMessageSelect={handleMessageSelect}
+              />
+            )}
+
+            {currentPage === 'message' && selectedMessage && (
+              <MessageView
+                message={selectedMessage}
+                onBack={handleBackToInbox}
+                onReply={handleReply}
+              />
+            )}
+
+            {currentPage === 'sent' && (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center">
+                  <p className="text-foreground font-medium">Sent Messages</p>
+                  <p className="text-muted-foreground text-sm mt-1">Your sent messages will appear here</p>
+                </div>
+              </div>
+            )}
+
+            {currentPage === 'spam' && (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center">
+                  <p className="text-foreground font-medium">Spam (V2)</p>
+                  <p className="text-muted-foreground text-sm mt-1">Filtered spam messages will appear here</p>
+                </div>
+              </div>
+            )}
+
+            {currentPage === 'settings' && <SettingsScreen />}
+          </main>
+        </div>
+
+        <ComposeModal
+          isOpen={isComposeOpen}
+          onClose={() => setIsComposeOpen(false)}
+          onSend={handleSend}
+          replyTo={replyTo}
         />
-
-        <main className="flex-1 overflow-hidden bg-white">
-          {currentPage === 'inbox' && (
-            <InboxScreen
-              messages={messages}
-              onMessageSelect={handleMessageSelect}
-            />
-          )}
-
-          {currentPage === 'message' && selectedMessage && (
-            <MessageView
-              message={selectedMessage}
-              onBack={handleBackToInbox}
-              onReply={handleReply}
-            />
-          )}
-
-          {currentPage === 'sent' && (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-center">
-                <p className="text-slate-600 font-medium">Sent Messages</p>
-                <p className="text-slate-400 text-sm mt-1">Your sent messages will appear here</p>
-              </div>
-            </div>
-          )}
-
-          {currentPage === 'spam' && (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-center">
-                <p className="text-slate-600 font-medium">Spam (V2)</p>
-                <p className="text-slate-400 text-sm mt-1">Filtered spam messages will appear here</p>
-              </div>
-            </div>
-          )}
-
-          {currentPage === 'settings' && <SettingsScreen />}
-        </main>
       </div>
-
-      <ComposeModal
-        isOpen={isComposeOpen}
-        onClose={() => setIsComposeOpen(false)}
-        onSend={handleSend}
-        replyTo={replyTo}
-      />
-    </div>
+    </ThemeProvider>
   );
 }
 
