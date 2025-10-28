@@ -3,6 +3,7 @@ import { WalletConnection } from '../types';
 import Logo from './Logo';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import WalletButton from './WalletButton';
 
 interface TopBarProps {
   wallet: WalletConnection;
@@ -27,18 +28,19 @@ export default function TopBar({ wallet }: TopBarProps) {
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
-        <div className="text-right">
+      <div className="ml-auto flex items-center gap-3">
+        <div className="text-right hidden sm:block">
           <div className="text-sm font-normal text-foreground">{wallet.solName}</div>
           <div className="text-xs text-muted-foreground font-light">
             {wallet.publicKey.slice(0, 4)}...{wallet.publicKey.slice(-4)}
           </div>
         </div>
-        <Avatar className="h-9 w-9">
+        <Avatar className="h-9 w-9 hidden sm:flex">
           <AvatarFallback className="bg-primary text-primary-foreground text-xs font-light">
             {wallet.solName.slice(0, 2).toUpperCase()}
           </AvatarFallback>
         </Avatar>
+        <WalletButton />
       </div>
     </div>
   );

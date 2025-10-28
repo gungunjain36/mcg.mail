@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useWallet } from '@solana/wallet-adapter-react';
 import ConnectScreen from './components/ConnectScreen';
 import Sidebar from './components/Sidebar';
 import TopBar from './components/TopBar';
@@ -8,6 +9,8 @@ import ComposeModal from './components/ComposeModal';
 import SettingsScreen from './components/SettingsScreen';
 import { Message, Page, WalletConnection } from './types';
 import { ThemeProvider } from '@/lib/theme';
+import { pseudoEncryptMessage } from '@/lib/crypto';
+import { createProviders } from '@/lib/erClient';
 
 const MOCK_MESSAGES: Message[] = [
   {
@@ -76,7 +79,7 @@ Charlie`,
 ];
 
 function App() {
-  const [isConnected, setIsConnected] = useState(false);
+  const { connected, publicKey } = useWallet();
   const [currentPage, setCurrentPage] = useState<Page>('inbox');
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [isComposeOpen, setIsComposeOpen] = useState(false);
@@ -84,14 +87,12 @@ function App() {
   const [messages, setMessages] = useState<Message[]>(MOCK_MESSAGES);
 
   const wallet: WalletConnection = {
-    publicKey: '5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty',
-    solName: 'yourname.sol',
-    connected: isConnected,
+    publicKey: publicKey?.toBase58() ?? '',
+    solName: 'phantom',
+    connected: connected,
   };
 
-  const handleConnect = () => {
-    setIsConnected(true);
-  };
+  const handleConnect = () => {};
 
   const handleMessageSelect = (message: Message) => {
     setSelectedMessage(message);
@@ -125,11 +126,22 @@ function App() {
   };
 
   const handleSend = (to: string, subject: string, body: string) => {
-    console.log('Sending message:', { to, subject, body });
-    setIsComposeOpen(false);
+    (async () => {
+      const enc = await pseudoEncryptMessage(subject, body);
+      const providers = createProviders();
+      console.log('Encrypted payload ready to send via ER:', {
+        to,
+        subject,
+        bodyLength: body.length,
+        ciphertext32: Array.from(enc.ciphertext).slice(0, 32),
+        nonce16: Array.from(enc.nonce),
+        erEndpoint: (providers as any).er.rpcEndpoint,
+      });
+      setIsComposeOpen(false);
+    })().catch((e) => console.error(e));
   };
 
-  if (!isConnected) {
+  if (!connected) {
     return (
       <ThemeProvider>
         <ConnectScreen onConnect={handleConnect} />

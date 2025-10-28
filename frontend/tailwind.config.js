@@ -1,15 +1,17 @@
+import tailwindcssAnimate from "tailwindcss-animate";
+
 /** @type {import('tailwindcss').Config} */
 export default {
-    darkMode: ['class'],
-    content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
-  theme: {
-  	extend: {
-  		borderRadius: {
+	darkMode: ['class'],
+	content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+	theme: {
+		extend: {
+			borderRadius: {
 				lg: '8px',
 				md: '6px',
 				sm: '4px'
-  		},
-  		colors: {
+			},
+			colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {
@@ -51,7 +53,7 @@ export default {
   				'5': 'hsl(var(--chart-5))'
   			}
   		}
-  	}
-  },
-  plugins: [require("tailwindcss-animate")],
+		}
+	},
+	plugins: [tailwindcssAnimate],
 };
